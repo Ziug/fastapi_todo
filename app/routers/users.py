@@ -8,7 +8,8 @@ from utils import hash
 
 router = APIRouter(prefix="/users", tags=["todo"])
 
-@router.post("", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
+# ============================================ create ============================================
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 async def create_user(new_user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     new_user.password = await hash(new_user.password)
@@ -23,3 +24,5 @@ async def create_user(new_user: schemas.UserCreate, db: Session = Depends(get_db
     db.refresh(created_user)
 
     return created_user
+
+# Todo - login and jwt token functionality
