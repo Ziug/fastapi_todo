@@ -14,7 +14,7 @@ router = APIRouter(prefix="/todo", tags=["todo"])
 # ============================================ get ============================================
 @router.get("")
 async def get_all_user_todos(db: Session = Depends(get_db), current_user: models.User = Depends(oauth2.get_curr_usr)):
-    return db.query(models.TodoTask).filter(models.TodoTask.user_id == current_user.id)
+    return db.query(models.TodoTask).filter(models.TodoTask.user_id == current_user.id).all()
 
 
 # ============================================ create ============================================

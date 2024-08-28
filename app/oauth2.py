@@ -48,8 +48,11 @@ async def verify_access_token(token: str):
 
         token_data = TokenData(id=id)
 
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in")
+
     except jwt.InvalidTokenError:
-        raise credentials_exception
+        raise credentials_exception    
 
     return token_data
 
