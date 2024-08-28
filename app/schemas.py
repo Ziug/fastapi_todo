@@ -10,11 +10,14 @@ class UserOut(BaseModel):
     username: str
 
 class TodoTask(BaseModel):
-    name: str
-    user: int
+    name: str | int
 
 class TodoSubtask(TodoTask):
     ...
     
 class TokenData(BaseModel):
-    id: Optional[str] = None
+    id: Optional[int] = None
+    
+class Token(BaseModel):
+    access_token: str
+    token_type: str
