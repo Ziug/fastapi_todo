@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -8,12 +8,24 @@ class UserCreate(BaseModel):
 
 class UserOut(BaseModel):
     username: str
+    
+    class Config:
+        orm_mode = True
+
+class TodoSubtask(BaseModel):
+    name: str | int
+    task_id: int
+    is_done: bool = False
 
 class TodoTask(BaseModel):
     name: str | int
+    subtasks: List["TodoSubtask"] = []
 
-class TodoSubtask(TodoTask):
-    ...
+class TodoTaskOut(TodoTask):
+    id: int
+    
+    class Config:
+        orm_mode = True
     
 class TokenData(BaseModel):
     id: Optional[int] = None

@@ -29,21 +29,25 @@ def upgrade() -> None:
     op.create_table(
         "todo_task",
         sa.Column("id", sa.Integer, primary_key=True, nullable=False),
-        sa.Column("name", sa.Integer),
+        sa.Column("name", sa.String),
         sa.Column("progress", sa.Float),
         sa.Column("created_at", sa.TIMESTAMP(timezone=False), nullable=False, server_default=sa.text('now()')),
-        sa.Column("user_id", sa.Integer, sa.ForeignKey("users.id", ondelete="CASCADE"))
+        sa.Column("user_id", sa.Integer, nullable = False)
     )
+    
+    op.create_foreign_key("task_users_fk", source_table="todo_task", referent_table="users",
+                          local_cols=["user_id"], remote_cols=["id"], ondelete="CASCADE")
     
     op.create_table(
         "todo_subtask",
         sa.Column("id", sa.Integer, primary_key=True, nullable=False),
         sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("is_done", sa.Boolean, default=False),
-        sa.Column("task_id", sa.Integer, sa.ForeignKey("todo_task.id", ondelete="CASCADE"))
+        sa.Column("task_id", sa.Integer, nullable = False)
     )
     
-    pass
+    op.create_foreign_key("subtask_task_fk", source_table="todo_subtask", referent_table="todo_task",
+                          local_cols=["task_id"], remote_cols=["id"], ondelete="CASCADE")
 
 
 def downgrade() -> None:
