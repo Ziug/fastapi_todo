@@ -1,3 +1,5 @@
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.orm import relationship
 from database import Base
 from sqlalchemy import (TIMESTAMP, Boolean, Column, Integer, String, Float, ForeignKey, text)
@@ -17,10 +19,17 @@ class TodoTask(Base):
     
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, server_default=text("ToDo task name"))
-    progress = Column(Float, nullable=False, default=0)
     created_at = Column(TIMESTAMP(timezone=False), nullable=False, server_default=text("now()"))
     user_id = Column("user_id", Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    subtasks = relationship("TodoSubtask")
+    subtasks = relationship("TodoSubtask", lazy='dynamic')
+    
+    @hybrid_property
+    def progress(self):
+        try:
+            res = round((self.subtasks.filter(TodoSubtask.is_done == True).count() / self.subtasks.count()) * 100 if self.subtasks else 0, 1)
+        except:
+            return 0
+        return res
 
 
 class TodoSubtask(Base):
